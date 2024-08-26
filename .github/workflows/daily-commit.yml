@@ -2,19 +2,23 @@ name: Daily Commit
 
 on:
   schedule:
-    - cron: "0 0 * * *" # 매일 자정에 실행됩니다.
+    - cron: "40 23 * * *"
 
 jobs:
   commit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Make a commit
         run: |
-          date > date.txt
-          git add date.txt
-          git commit -m "Daily commit"
+          git config --local user.email "esesang13@naver.com"
+          git config --local user.name "0minKoh"
+          git remote set-url origin https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git pull --rebase
+          git commit --allow-empty -m "Daily commit"
           git push
